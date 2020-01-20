@@ -1,0 +1,22 @@
+
+<div class="container-fluid">
+<mat-tab-group (selectedIndexChange)="setIndexValue($event)">
+    <mat-tab label="Edit"> 
+        <app-receipt-form-edit [receiptId]="receiptId"></app-receipt-form-edit>
+    </mat-tab>
+    <mat-tab label="Preview" isActive>
+        <app-receipt-form-preview  
+         [selectedTab]="selectedTabSubject">
+          </app-receipt-form-preview>          
+    </mat-tab>
+    <mat-tab label="Download"> 
+        Download Download Download Download Download
+        Download Download Download Download Download
+        Download Download Download Download Download
+        Download Download Download Download Download  </mat-tab>
+    <mat-tab label="Delete">  
+        Delete      
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
