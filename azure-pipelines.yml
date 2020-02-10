@@ -15,20 +15,13 @@ steps:
   displayName: 'Use .NET Core SDK 3.1.100'
   inputs:
     packageType: sdk
-    version: 3.1.100 
-
-- task: Npm@1
-  displayName: 'Install @Angular/Cli'
-  inputs: 
-    verbose: false
-    command: custom
-    customCommand: install @angular/cli
+    version: 3.1.100  
     
-# - script: 'sudo npm install -g @angular/cli'
-#   displayName: 'Install @Angular/Cli Global'
-#   # workingDirectory: ./invoice-app/ClientApp
+- script: 'sudo npm install -g @angular/cli'
+  displayName: 'Install @Angular/Cli Global'
+  # workingDirectory: ./invoice-app/ClientApp
     
-- script: 'ng --version'
+- script: 'ng --version && npm --version'
   displayName: 'Display @Angular/Cli Version'
   # workingDirectory: ./invoice-app/ClientApp
 
