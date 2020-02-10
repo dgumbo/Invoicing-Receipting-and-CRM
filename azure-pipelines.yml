@@ -28,10 +28,10 @@ steps:
 
 - task: Npm@1
   displayName: 'Run npm install'
-  inputs:
+  inputs: 
     verbose: false
-    prefix: ./invoice-app/ClientApp 
-    install: ./invoice-app/ClientApp
+    command: custom
+    customCommand: install /invoice-app/ClientApp
 
 #- script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
 #  displayName: 'Compile Sass assets'
