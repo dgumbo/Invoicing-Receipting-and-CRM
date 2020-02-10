@@ -6,7 +6,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace invoice_app 
+namespace invoice_app.FontAwesome
 {
 
 	/// <summary>
@@ -102,7 +102,7 @@ namespace invoice_app
 		}
 
 		private PrivateFontCollection _fonts = new PrivateFontCollection();
-		private const string FONT_FILE_NAME = "fontawesome-webfont.ttf";
+		private readonly string FONT_FILE_NAME = System.IO.Path.Combine("FontAwesome", "fontawesome-webfont.ttf");
 
 		#region statics
 		private static FontAwesome _instance;
@@ -253,7 +253,7 @@ namespace invoice_app
 		/// <param name="props">The props.</param>
 		/// <returns></returns>
 		private Bitmap GetImageInternal(Properties props)
-		{
+		{ 
 			var size = GetFontIconRealSize(props.Size, (int)props.Type);
 			var bmpTemp = new Bitmap(size.Width, size.Height);
 			using (Graphics g1 = Graphics.FromImage(bmpTemp))
