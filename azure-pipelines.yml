@@ -24,12 +24,12 @@ steps:
     command: custom
     customCommand: install @angular/cli 
 
-#- task: Npm@1
-#  displayName: 'Run npm install'
-#  inputs: 
-#    verbose: false
-#    command: custom
-#    customCommand: install ./invoice-app/ClientApp
+- task: Npm@1
+ displayName: 'Run npm install'
+ inputs: 
+   verbose: false
+   command: custom
+   customCommand: install ./invoice-app/ClientApp
 
 - task: Npm@1
   displayName: 'Build the Frontend App'
@@ -44,19 +44,19 @@ steps:
 ##- task: gulp@1
 ##  displayName: 'Run gulp tasks'
 
-##- script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
-##  displayName: 'Write build info'
-##  workingDirectory: Tailspin.SpaceGame.Web/wwwroot
+#- script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
+#  displayName: 'Write build info'
+#  workingDirectory: Tailspin.SpaceGame.Web/wwwroot
 
-#- task: DotNetCoreCLI@2
-#  displayName: 'Restore project dependencies'
-#  inputs:
-#    command: 'restore'
-#    projects: '**/*.csproj'
+- task: DotNetCoreCLI@2
+ displayName: 'Restore project dependencies'
+ inputs:
+   command: 'restore'
+   projects: '**/*.csproj'
 
-#- task: DotNetCoreCLI@2
-#  displayName: 'Build the project - Release'
-#  inputs:
-#    command: 'build'
-#    arguments: '--no-restore --configuration Release'
-#    projects: '**/*.csproj'
+- task: DotNetCoreCLI@2
+ displayName: 'Build the project - Release'
+ inputs:
+   command: 'build'
+   arguments: '--no-restore --configuration Release'
+   projects: '**/*.csproj'
