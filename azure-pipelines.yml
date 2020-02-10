@@ -8,35 +8,36 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  ngRootDir: './invoice-app/ClientApp'
+  dotNetSdkVersion: '3.1.100'
 
 steps:
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core SDK 3.1.100'
+  displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
   inputs:
     packageType: sdk
-    version: 3.1.100  
+    version: $(dotNetSdkVersion) 
 
     
 - script: 'sudo npm install -g @angular/cli'
-  displayName: 'Install @Angular/Cli Global'
-  
+  displayName: 'Install @Angular/Cli Global'  
     
 - script: 'ng --version'
-  displayName: 'Display @Angular/Cli Version'
+  displayName: 'Display @Angular/Cli Version Installed'
   
 
 - script: 'npm install'
   displayName: 'Run npm install'
-  workingDirectory: ./invoice-app/ClientApp
+  workingDirectory: $(ngRootDir)
 
 
-- task: Npm@1
-  displayName: 'Build Frontend for Production'
-  inputs: 
-    verbose: false
-    command: custom
-    customCommand: run-script build-prod --prefix ./invoice-app/ClientApp
+# - task: Npm@1
+#   displayName: 'Build Frontend for Production'
+#   inputs: 
+#     verbose: false
+#     command: custom
+#     customCommand: run-script build-prod --prefix $(ngRootDir)
 
 
 - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
@@ -52,21 +53,21 @@ steps:
 
 
 - task: DotNetCoreCLI@2
-  displayName: 'Build the project - Release'
+  displayName: 'Build the project - $(buildConfiguration)'
   inputs:
     command: 'build'
-    arguments: '--no-restore --configuration Release'
+    arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
 
     
 
 - task: DotNetCoreCLI@2
-  displayName: 'Publish the project - Release'
+  displayName: 'Publish the project - $(buildConfiguration)'
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
     publishWebProjects: false
-    arguments: '--no-build --configuration Release --output $(Build.ArtifactStagingDirectory)/Release'
+    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     zipAfterPublish: true
 
 - task: PublishBuildArtifacts@1
