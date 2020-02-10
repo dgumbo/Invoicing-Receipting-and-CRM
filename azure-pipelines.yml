@@ -17,12 +17,16 @@ steps:
     packageType: sdk
     version: 3.1.100 
 
-- task: Npm@1
-  displayName: 'Install @Angular/Cli'
-  inputs: 
-    verbose: false
-    command: custom
-    customCommand: install @angular/cli
+# - task: Npm@1
+#   displayName: 'Install @Angular/Cli'
+#   inputs: 
+#     verbose: false
+#     command: custom
+#     customCommand: install @angular/cli
+    
+- script: 'sudo npm install -g install @angular/cli'
+  displayName: 'Install @Angular/Cli Global'
+  # workingDirectory: ./invoice-app/ClientApp
 
 # - task: Npm@1
 #   displayName: 'Run install npm@latest -g'
@@ -33,11 +37,10 @@ steps:
 
 - task: Npm@1
   displayName: 'Run npm install'
-  workingDirectory: ./invoice-app/ClientApp
   inputs: 
     verbose: false
     command: custom
-    customCommand: install #./invoice-app/ClientApp
+    customCommand: install ./invoice-app/ClientApp
 
 - task: Npm@1
   displayName: 'Build the Frontend App'
