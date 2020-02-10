@@ -29,7 +29,7 @@ steps:
   inputs: 
     verbose: false
     command: custom
-    customCommand: build-prod
+    customCommand: run build-prod
 #     ./invoice-app/ClientApp
 
 ##- script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
