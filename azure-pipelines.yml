@@ -11,11 +11,11 @@ variables:
 
 steps:
 
-#- task: UseDotNet@2
-#  displayName: 'Use .NET Core SDK 3.1.100'
-#  inputs:
-#    packageType: sdk
-#    version: 3.1.100 
+- task: UseDotNet@2
+ displayName: 'Use .NET Core SDK 3.1.100'
+ inputs:
+    packageType: sdk
+    version: 3.1.100 
 
 - task: Npm@1
   displayName: 'Install @Angular/Cli'
@@ -25,11 +25,11 @@ steps:
     customCommand: install @angular/cli 
 
 - task: Npm@1
- displayName: 'Run npm install'
- inputs: 
-   verbose: false
-   command: custom
-   customCommand: install ./invoice-app/ClientApp
+  displayName: 'Run npm install'
+  inputs: 
+    verbose: false
+    command: custom
+    customCommand: install ./invoice-app/ClientApp
 
 - task: Npm@1
   displayName: 'Build the Frontend App'
@@ -51,12 +51,12 @@ steps:
 - task: DotNetCoreCLI@2
  displayName: 'Restore project dependencies'
  inputs:
-   command: 'restore'
-   projects: '**/*.csproj'
+    command: 'restore'
+    projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
  displayName: 'Build the project - Release'
  inputs:
-   command: 'build'
-   arguments: '--no-restore --configuration Release'
-   projects: '**/*.csproj'
+    command: 'build'
+    arguments: '--no-restore --configuration Release'
+    projects: '**/*.csproj'
