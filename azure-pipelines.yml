@@ -31,7 +31,7 @@ steps:
   inputs: 
     verbose: false
     command: custom
-    customCommand: install /invoice-app/ClientApp
+    customCommand: install ./invoice-app/ClientApp
 
 #- script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
 #  displayName: 'Compile Sass assets'
