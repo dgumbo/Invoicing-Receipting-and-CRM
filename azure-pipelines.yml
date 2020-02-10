@@ -22,7 +22,7 @@ steps:
   inputs: 
     verbose: false
     command: custom
-    customCommand: install @angular/cli 
+    customCommand: install -g @angular/cli
 
 - task: Npm@1
   displayName: 'Run npm install'
