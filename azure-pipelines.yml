@@ -26,19 +26,20 @@ steps:
   # workingDirectory: ./invoice-app/ClientApp
 
 # - task: Npm@1
-#   displayName: 'Run install npm@latest -g'
+#   displayName: 'Run npm install'
+#   workingDirectory: ./invoice-app/ClientApp
 #   inputs: 
 #     verbose: false
 #     command: custom
-#     customCommand: install npm@latest -g
+#     customCommand: install ./invoice-app/ClientApp
 
-- task: Npm@1
+- script: 'npm install'
   displayName: 'Run npm install'
   workingDirectory: ./invoice-app/ClientApp
-  inputs: 
-    verbose: false
-    command: custom
-    customCommand: install ./invoice-app/ClientApp
+  # inputs: 
+  #   verbose: false
+  #   command: custom
+  #   customCommand: install ./invoice-app/ClientApp
 
 - task: Npm@1
   displayName: 'Build the Frontend App'
