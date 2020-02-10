@@ -24,7 +24,7 @@ steps:
 #     command: custom
 #     customCommand: install @angular/cli
     
-- script: 'sudo npm install -g install @angular/cli'
+- script: 'sudo npm install -g @angular/cli'
   displayName: 'Install @Angular/Cli Global'
   # workingDirectory: ./invoice-app/ClientApp
 
