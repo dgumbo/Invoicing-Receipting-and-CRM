@@ -16,15 +16,22 @@ steps:
     packageType: sdk
     version: 3.1.100
 
+#- task: Npm@1
+#  displayName: 'Run npm install'
+#  inputs:
+#    verbose: false
+
+#- task: Npm@1
+#  displayName: 'Run npm --prefix ./invoice-app/ClientApp install ./invoice-app/ClientApp'
+#  inputs:
+#    verbose: false
+
 - task: Npm@1
   displayName: 'Run npm install'
   inputs:
     verbose: false
-
-- task: Npm@1
-  displayName: 'Run npm --prefix ./invoice-app/ClientApp install ./invoice-app/ClientApp'
-  inputs:
-    verbose: false
+    prefix: ./invoice-app/ClientApp 
+    install: ./invoice-app/ClientApp
 
 #- script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
 #  displayName: 'Compile Sass assets'
