@@ -23,27 +23,18 @@ steps:
   inputs:
     packageType: sdk
     version: $(dotNetSdkVersion) 
-
     
-- script: 'sudo npm install -g @angular/cli'
-  displayName: 'Install @Angular/Cli Global'  
-    
-- script: 'ng --version'
-  displayName: 'Display @Angular/Cli Version Installed'
-  
-
-- script: 'npm install'
-  displayName: 'Run npm install'
-  workingDirectory: $(ngRootDir)
-
-
-# - task: Npm@1
-#   displayName: 'Build Frontend for Production'
-#   inputs: 
-#     verbose: false
-#     command: custom
-#     customCommand: run-script build-prod --prefix $(ngRootDir)
-##### customCommand: run-script build-prod --prefix ./invoice-app/ClientApp
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
+  inputs:
+    version: '2.1.505'
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['System.PullRequest.TargetBranch'], 'master')
+    )
 
 
 - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
@@ -56,6 +47,57 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
+    
+
+#### Install Angular just before publishing code.    
+- script: 'sudo npm install -g @angular/cli'
+  displayName: 'Install @Angular/Cli Global'  
+    
+- script: 'ng --version'
+  displayName: 'Display @Angular/Cli Version Installed'
+  
+
+#### Run npm install So that Sonar Tests do not fail. 
+- script: 'npm install'
+  displayName: 'Run npm install'
+  workingDirectory: $(ngRootDir)
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['System.PullRequest.TargetBranch'], 'master')
+    )
+
+
+# - task: Npm@1
+#   displayName: 'Build Frontend for Production'
+#   inputs: 
+#     verbose: false
+#     command: custom
+#     customCommand: run-script build-prod --prefix $(ngRootDir)
+##### customCommand: run-script build-prod --prefix ./invoice-app/ClientApp
+
+
+- task: SonarCloudPrepare@1
+  displayName: 'Prepare SonarCloud analysis'
+  inputs:
+    SonarCloud: '$(SonarCloundConnection)'
+    organization: '$(SonarOrganization)'
+    scannerMode: 'MSBuild'
+    projectKey: '$(SonarProjectKey)'
+    projectName: '$(SonarProjectName)'
+    projectVersion: '$(Build.BuildNumber)'
+    extraProperties: |
+     sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml
+     sonar.exclusions=**/wwwroot/lib/**/*
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['System.PullRequest.TargetBranch'], 'master')
+    )
 
 
 - task: DotNetCoreCLI@2
@@ -65,17 +107,62 @@ steps:
     arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
 
-    
 
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - $(buildConfiguration)'
   inputs:
     command: 'test'
-    arguments: '--no-build --configuration $(buildConfiguration)'
+    arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     publishTestResults: true
-    projects: '**/*.Tests.csproj'
+    projects: '**/*.Tests.csproj' 
 
-    
+
+# - script: 'sudo apt-get install tree && tree -L 2'
+#   displayName: 'Print Directory Tree For Test Results' 
+#   workingDirectory: $(Build.SourcesDirectory)/
+
+
+- task: DotNetCoreCLI@2
+  displayName: 'Install ReportGenerator'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'install --global dotnet-reportgenerator-globaltool' 
+
+
+- script: |
+    reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
+  displayName: 'Create code coverage report'  
+
+
+- task: SonarCloudAnalyze@1
+  displayName: 'Run SonarCloud code analysis'
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['System.PullRequest.TargetBranch'], 'master')
+    )
+
+
+- task: SonarCloudPublish@1
+  displayName: 'Publish SonarCloud quality gate results'
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['System.PullRequest.TargetBranch'], 'master')
+    )
+
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml' 
+
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
@@ -85,6 +172,7 @@ steps:
     publishWebProjects: false
     arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     zipAfterPublish: true
+
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
