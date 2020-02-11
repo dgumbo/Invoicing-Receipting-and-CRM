@@ -104,7 +104,8 @@ steps:
 
 - script: 'sudo apt-get install tree && tree'
   displayName: 'Print Directory Tree For Test Results'
-  workingDirectory: $(Build.SourcesDirectory)/TestResults/
+  # workingDirectory: $(Build.SourcesDirectory)/TestResults/
+  workingDirectory: $(Build.SourcesDirectory)/
 
 
 - script: |
