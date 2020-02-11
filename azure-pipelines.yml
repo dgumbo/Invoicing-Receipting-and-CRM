@@ -43,6 +43,7 @@ steps:
 #     verbose: false
 #     command: custom
 #     customCommand: run-script build-prod --prefix $(ngRootDir)
+##### customCommand: run-script build-prod --prefix ./invoice-app/ClientApp
 
 
 - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
