@@ -92,6 +92,12 @@ steps:
     custom: tool
     arguments: 'install --global dotnet-reportgenerator-globaltool'
 
+    
+- script: 'dotnet add package coverlet.msbuild'
+  displayName: 'Try Install coverlet.msbuild'
+  # workingDirectory: $(Build.SourcesDirectory)/TestResults/
+  workingDirectory: '$(Build.SourcesDirectory)/invoice-app.Tests/'
+
 
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - $(buildConfiguration)'
@@ -102,7 +108,7 @@ steps:
     projects: '**/*.Tests.csproj'
 
 
-- script: 'sudo apt-get install tree && tree -L 3'
+- script: 'sudo apt-get install tree && tree -L 2'
   displayName: 'Print Directory Tree For Test Results'
   # workingDirectory: $(Build.SourcesDirectory)/TestResults/
   workingDirectory: $(Build.SourcesDirectory)/
