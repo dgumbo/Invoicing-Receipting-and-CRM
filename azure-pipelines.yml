@@ -47,14 +47,6 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-    
-
-#### Install Angular just before publishing code.    
-- script: 'sudo npm install -g @angular/cli'
-  displayName: 'Install @Angular/Cli Global'  
-    
-- script: 'ng --version'
-  displayName: 'Display @Angular/Cli Version Installed'
   
 
 #### Run npm install So that Sonar Tests do not fail. 
@@ -162,6 +154,27 @@ steps:
   inputs:
     codeCoverageTool: 'cobertura'
     summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml' 
+    
+
+#### Install Angular just before publishing code.    
+- script: 'sudo npm install -g @angular/cli'
+  displayName: 'Install @Angular/Cli Global'  
+  condition: |
+    and
+    (
+      succeeded(), 
+      eq(variables['System.PullRequest.SourceBranch'], 'master')
+    )
+    
+- script: 'ng --version'
+  displayName: 'Display @Angular/Cli Version Installed'
+  condition: |
+    and
+    (
+      succeeded(), 
+      eq(variables['System.PullRequest.SourceBranch'], 'master')
+    )
+#### End Install Angular just before publishing code.  
 
 
 - task: DotNetCoreCLI@2
@@ -172,6 +185,12 @@ steps:
     publishWebProjects: false
     arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     zipAfterPublish: true
+  condition: |
+    and
+    (
+      succeeded(), 
+      eq(variables['System.PullRequest.SourceBranch'], 'master')
+    )
     
 
 - task: WhiteSource Bolt@20
