@@ -11,6 +11,8 @@
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <RootNamespace>invoice_app</RootNamespace>
+    
+    <ProjectGuid>{21059690-7765-4CF4-AFBD-4FA89B563816}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>

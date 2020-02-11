@@ -5,6 +5,8 @@
     <RootNamespace>invoice_app.Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
+    
+    <ProjectGuid>{062D6036-09C8-4A45-8831-7C94B1CDA1CB}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
