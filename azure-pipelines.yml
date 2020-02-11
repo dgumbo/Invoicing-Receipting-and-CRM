@@ -23,6 +23,11 @@ steps:
   inputs:
     packageType: sdk
     version: $(dotNetSdkVersion) 
+    
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
+  inputs:
+    version: '2.1.505'
 
     
 - script: 'sudo npm install -g @angular/cli'
