@@ -115,7 +115,7 @@ steps:
     arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     publishTestResults: true
     projects: '**/*.Tests.csproj' 
-    
+
 
 # - script: 'sudo apt-get install tree && tree -L 2'
 #   displayName: 'Print Directory Tree For Test Results' 
@@ -127,14 +127,7 @@ steps:
   inputs:
     command: custom
     custom: tool
-    arguments: 'install --global dotnet-reportgenerator-globaltool'
-  condition: |
-    and
-    (
-      succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
-    )
+    arguments: 'install --global dotnet-reportgenerator-globaltool' 
 
 
 - script: |
