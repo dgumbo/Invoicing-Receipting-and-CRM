@@ -1,5 +1,3 @@
-using invoice_app.RandomNames.service;
-using invoice_app.RandomNames.service.impl;
 using invoice_app.Services;
 using invoice_app.Services.impl;
 using invoice_demo_app.invoice.service;
@@ -56,7 +54,6 @@ namespace invoice_app
             .AddTransient<ProductService, ProductServiceImpl>()
             .AddTransient<AddressService, AddressServiceImpl>()
             .AddTransient<ReceiptService, ReceiptServiceImpl>()
-            .AddTransient<RandomNamesService, RandomNamesServiceImpl>()
             .AddTransient<InitTestData, InitTestData>();
 
             services.AddCors(options =>
