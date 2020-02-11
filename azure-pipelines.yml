@@ -102,7 +102,7 @@ steps:
     projects: '**/*.Tests.csproj'
 
 
-- script: 'sudo apt-get install tree && tree $(Build.SourcesDirectory)'
+- script: 'sudo apt-get install tree && tree'
   displayName: 'Print Directory Tree For Test Results'
   workingDirectory: $(Build.SourcesDirectory)
 
