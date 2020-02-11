@@ -11,6 +11,7 @@ using invoice_demo_app.Models;
 using System.IO; 
 using System.Drawing;
 using System.Drawing.Imaging;
+using invoice_app.FontAwesome;
 /**
 *
 * @author dgumbo
@@ -170,7 +171,7 @@ namespace invoice_demo_app.invoice.service.impl
             invoiceStartY += printer.MeasureString(sCompanyName, font).Height * 1.05;
 
 
-            Bitmap imgBit = invoice_app.FontAwesome.Instance.GetImage(new invoice_app.FontAwesome.Properties(invoice_app.FontAwesome.Type.Phone) { ForeColor = Color.Blue, Size = 64, BackColor = Color.White });
+            Bitmap imgBit = FontAwesome.Instance.GetImage(new FontAwesome.Properties(FontAwesome.Type.Phone) { ForeColor = Color.Blue, Size = 64, BackColor = Color.White });
             MemoryStream streamPhoneBit = new MemoryStream();
             imgBit.Save(streamPhoneBit, ImageFormat.Tiff);
 
@@ -180,7 +181,7 @@ namespace invoice_demo_app.invoice.service.impl
             printer.DrawString("+263 773 632 856", font, brush, new XPoint(invoiceStartX + 12, invoiceStartY));
             invoiceStartY += printer.MeasureString(sCompanyName, font).Height * 1.05;
 
-            Bitmap imgBit2 = invoice_app.FontAwesome.Instance.GetImage(new invoice_app.FontAwesome.Properties(invoice_app.FontAwesome.Type.Globe ) { ForeColor = Color.Blue, Size = 64, BackColor = Color.White });
+            Bitmap imgBit2 = FontAwesome.Instance.GetImage(new FontAwesome.Properties(FontAwesome.Type.Globe ) { ForeColor = Color.Blue, Size = 64, BackColor = Color.White });
             MemoryStream streamPhoneBit2 = new MemoryStream();
             imgBit2.Save(streamPhoneBit2, ImageFormat.Tiff);
              
