@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="642edcb2-4be6-4d61-8f51-5d9a6119e412" name="gdenz@DESKTOP-D1AK409 2020-02-11 21:45:21" runUser="DESKTOP-D1AK409\gdenz" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2020-02-11T21:45:21.4027655+00:00" queuing="2020-02-11T21:45:21.4027680+00:00" start="2020-02-11T21:45:20.2643541+00:00" finish="2020-02-11T21:45:21.4164208+00:00" />
+  <TestSettings name="default" id="1d6b268e-7264-4eb1-99d5-be10025daacc">
+    <Deployment runDeploymentRoot="gdenz_DESKTOP-D1AK409_2020-02-11_21_45_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2cfda762-06c3-432c-8a81-15242b347679" testId="e640abaf-e3a1-587f-3278-a8fdca26eb6a" testName="TestValidateBaseEntityProperties" computerName="DESKTOP-D1AK409" duration="00:00:00.0222760" startTime="2020-02-11T21:45:21.0000000+00:00" endTime="2020-02-11T21:45:21.0000000+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2cfda762-06c3-432c-8a81-15242b347679" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TestValidateBaseEntityProperties" storage="c:\users\gdenz\desktop\dev projects\invoice-app\invoice-app.tests\bin\release\netcoreapp3.1\invoice-app.tests.dll" id="e640abaf-e3a1-587f-3278-a8fdca26eb6a">
+      <Execution id="2cfda762-06c3-432c-8a81-15242b347679" />
+      <TestMethod codeBase="C:\Users\gdenz\Desktop\Dev Projects\invoice-app\invoice-app.Tests\bin\Release\netcoreapp3.1\invoice-app.Tests.dll" adapterTypeName="executor://nunit3testexecutor/" className="invoice_demo_app.Tests.Basic.models.BaseEntityTest" name="TestValidateBaseEntityProperties" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e640abaf-e3a1-587f-3278-a8fdca26eb6a" executionId="2cfda762-06c3-432c-8a81-15242b347679" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 3.15.1.0: Test execution started&#xD;
+Running all tests in C:\Users\gdenz\Desktop\Dev Projects\invoice-app\invoice-app.Tests\bin\Release\netcoreapp3.1\invoice-app.Tests.dll&#xD;
+   NUnit3TestExecutor converted 1 of 1 NUnit test cases&#xD;
+NUnit Adapter 3.15.1.0: Test execution complete&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

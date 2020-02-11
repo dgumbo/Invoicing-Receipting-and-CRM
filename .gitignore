@@ -29,6 +29,7 @@ Obj/
 .OldCode/
 .sonarqube/
 */TestResults/ 
+_temp/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
