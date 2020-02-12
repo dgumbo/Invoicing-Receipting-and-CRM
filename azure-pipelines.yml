@@ -80,9 +80,9 @@ steps:
   displayName: 'Build Frontend for Production'
   inputs: 
     verbose: false
-    command: build-prod
+    command: custom
     workingDir: '$(ngRootDir)'
-#     customCommand: run-script build-prod --prefix $(ngRootDir)
+    customCommand: run-script build-prod
 ##### customCommand: run-script build-prod --prefix ./invoice-app/ClientApp
 
 
