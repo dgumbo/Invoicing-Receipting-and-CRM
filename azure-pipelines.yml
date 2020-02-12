@@ -254,7 +254,7 @@ steps:
   inputs:
     azureSubscription: '$(AzureSubscription)'
     appType: 'webAppLinux'
-    appName: 'invoice-app-prod'
+    appName: 'invoice-app-dev'
     package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
   condition: |
     and
