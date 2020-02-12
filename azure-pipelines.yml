@@ -61,29 +61,19 @@ steps:
   inputs:
     command: 'install'
     workingDir: '$(ngRootDir)'
-  # condition: |
-  #   and (
-  #     succeeded(),
-  #     or (
-  #       and ( 
-  #         eq(variables['Build.Reason'], 'PullRequest'),
-  #         eq(variables['System.PullRequest.TargetBranch'], 'master')
-  #       ),        
-  #       eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-  #       eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-  #     )
-  #   )
+  condition: |
+    and (
+      succeeded(),
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+      )
+    )
 #### End Run npm install So that Sonar Tests do not fail. 
-
-
-- task: Npm@1
-  displayName: 'Build Frontend for Production'
-  inputs: 
-    verbose: false
-    command: custom
-    workingDir: '$(ngRootDir)'
-    customCommand: run-script build-prod
-##### customCommand: run-script build-prod --prefix ./invoice-app/ClientApp
 
 
 - task: SonarCloudPrepare@1
@@ -212,6 +202,16 @@ steps:
     )
 #### End Install Angular just before publishing code.  
 
+ 
+##### CustomCommand: run-script build-prod
+# - task: Npm@1
+#   displayName: 'Build Frontend for Production'
+#   inputs: 
+#     verbose: false
+#     command: custom
+#     workingDir: '$(ngRootDir)'
+#     customCommand: run-script build-prod
+##### End CustomCommand: run-script build-prod
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
