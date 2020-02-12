@@ -248,7 +248,7 @@ steps:
 - task: AzureWebApp@1
   displayName: 'Deploy App to Azure Website'
   inputs:
-    azureSubscription: 'Visual Studio Enterprise Subscription – MPN(6cc72829-3201-4e65-944f-2d9bbe848ab3)'
+    azureSubscription: '$(AzureSubscription)'
     appType: 'webAppLinux'
     appName: 'invoice-app-prod'
     package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
