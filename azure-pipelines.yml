@@ -51,8 +51,10 @@ steps:
     (
       succeeded(),
       or(
-        eq(variables['Build.Reason'], 'PullRequest'),
-        eq(variables['System.PullRequest.TargetBranch'], 'master'),        
+        and( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
         eq(variables['Build.SourceBranch'], 'refs/heads/master')
       )
     )
