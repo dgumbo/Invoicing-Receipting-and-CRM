@@ -116,7 +116,7 @@ steps:
     command: 'test'
     arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     publishTestResults: true
-    projects: '**/*.Tests.csproj' 
+    projects: '**/*.*Tests.csproj' 
 
 
 # - script: 'sudo apt-get install tree && tree -L 2'
