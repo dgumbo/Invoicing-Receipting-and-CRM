@@ -44,14 +44,14 @@ public class InitTestData
             {
                 BillTo = billingAddress,
                 ShipTo = billingAddress,
-                Date =   DateTime.Now ,
+                Date = DateTime.Now,
                 Number = "INV" + number,
                 EndNotes = notes,
                 PaymentDetails = paymentDetails
             };
 
             List<Product> products = initProductListData();
-            invoice.InvoiceLines = initInvoiceLineListData(products); 
+            invoice.InvoiceLines = initInvoiceLineListData(products);
 
             return invoiceService.Create(invoice);
         }
@@ -219,7 +219,7 @@ public class InitTestData
         }
 
         return products;
-    } 
+    }
 
     private String initNotes()
     {

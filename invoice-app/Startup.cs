@@ -54,7 +54,8 @@ namespace invoice_app
             .AddTransient<ProductService, ProductServiceImpl>()
             .AddTransient<AddressService, AddressServiceImpl>()
             .AddTransient<ReceiptService, ReceiptServiceImpl>()
-            .AddTransient<InitTestData, InitTestData>();
+            //.AddTransient<InitTestData, InitTestData>()
+            ;
 
             services.AddCors(options =>
             {
