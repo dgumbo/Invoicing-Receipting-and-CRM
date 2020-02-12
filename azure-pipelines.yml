@@ -7,7 +7,7 @@ trigger:
     - docs/*  # exclude the docs folder
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'ubuntu-latest'
   demands:
   - npm
 
