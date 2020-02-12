@@ -25,7 +25,7 @@ namespace invoice_demo_app.Tests.Basic.models
         {
             product.ValidateBaseEntityProperties();
              
-            Assert.AreEqual(product.Id, 0);
+            Assert.That(product.Id, Is.EqualTo( 0));
             Assert.IsNotNull(product.CreatedByUser);
             Assert.AreEqual(product.CreatedByUser, "dgumbo");
             Assert.AreEqual(product.ModifiedByUser, "dgumbo");
