@@ -24,22 +24,35 @@ steps:
     packageType: sdk
     version: $(dotNetSdkVersion) 
     
+# - task: UseDotNet@2
+#   displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
+#   inputs:
+#     version: '2.1.505'
+#   # condition: |
+#   #   and
+#   #   (
+#   #     succeeded(),
+#   #     or 
+#   #     (
+#   #       and 
+#   #       (
+#   #         eq(variables['Build.Reason'], 'PullRequest'),
+#   #         eq(variables['System.PullRequest.TargetBranch'], 'master')
+#   #       ),        
+#   #       eq(variables['Build.SourceBranch'], 'refs/heads/master')
+#   #   )
+    
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
   inputs:
     version: '2.1.505'
   condition: |
-    and
+    or
     (
       succeeded(),
-      or 
-      (
-        and 
-        (
-          eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['System.PullRequest.TargetBranch'], 'master')
-        ),        
-        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['System.PullRequest.TargetBranch'], 'master'),        
+      eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
 
 
@@ -59,19 +72,19 @@ steps:
 - script: 'npm install'
   displayName: 'Run npm install'
   workingDirectory: $(ngRootDir)
-  condition: |
-    and
-    (
-      succeeded(),
-      or 
-      (
-        and 
-        (
-          eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['System.PullRequest.TargetBranch'], 'master')
-        ),        
-        eq(variables['Build.SourceBranch'], 'refs/heads/master')
-    )
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(),
+  #     or 
+  #     (
+  #       and 
+  #       (
+  #         eq(variables['Build.Reason'], 'PullRequest'),
+  #         eq(variables['System.PullRequest.TargetBranch'], 'master')
+  #       ),        
+  #       eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  #   )
 
 
 # - task: Npm@1
@@ -95,19 +108,19 @@ steps:
     extraProperties: |
      sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml
      sonar.exclusions=**/wwwroot/lib/**/*
-  condition: |
-    and
-    (
-      succeeded(),
-      or 
-      (
-        and 
-        (
-          eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['System.PullRequest.TargetBranch'], 'master')
-        ),        
-        eq(variables['Build.SourceBranch'], 'refs/heads/master')
-    )
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(),
+  #     or 
+  #     (
+  #       and 
+  #       (
+  #         eq(variables['Build.Reason'], 'PullRequest'),
+  #         eq(variables['System.PullRequest.TargetBranch'], 'master')
+  #       ),        
+  #       eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  #   )
 
 
 - task: DotNetCoreCLI@2
@@ -147,36 +160,36 @@ steps:
 
 - task: SonarCloudAnalyze@1
   displayName: 'Run SonarCloud code analysis'
-  condition: |
-    and
-    (
-      succeeded(),
-      or 
-      (
-        and 
-        (
-          eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['System.PullRequest.TargetBranch'], 'master')
-        ),        
-        eq(variables['Build.SourceBranch'], 'refs/heads/master')
-    )
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(),
+  #     or 
+  #     (
+  #       and 
+  #       (
+  #         eq(variables['Build.Reason'], 'PullRequest'),
+  #         eq(variables['System.PullRequest.TargetBranch'], 'master')
+  #       ),        
+  #       eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  #   )
 
 
 - task: SonarCloudPublish@1
   displayName: 'Publish SonarCloud quality gate results'
-  condition: |
-    and
-    (
-      succeeded(),
-      or 
-      (
-        and 
-        (
-          eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['System.PullRequest.TargetBranch'], 'master')
-        ),        
-        eq(variables['Build.SourceBranch'], 'refs/heads/master')
-    )
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(),
+  #     or 
+  #     (
+  #       and 
+  #       (
+  #         eq(variables['Build.Reason'], 'PullRequest'),
+  #         eq(variables['System.PullRequest.TargetBranch'], 'master')
+  #       ),        
+  #       eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  #   )
 
 
 - task: PublishCodeCoverageResults@1
