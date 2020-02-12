@@ -9,7 +9,7 @@ export class Globals {
   public readonly hostUrl: string = environment.apiUrl;
   public readonly production: boolean = environment.production;
   public admin: boolean = false;
-  //public serviceCategories: ServiceCategory[];
+  public serviceCategories:  any[] = [];
 
   public isCkEditorJsLoaded: boolean = false;
 
