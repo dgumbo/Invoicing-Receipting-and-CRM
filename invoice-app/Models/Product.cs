@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 /**
 *
 * @author dgumbo
+* 
 */
 namespace invoice_demo_app.Models
 {
