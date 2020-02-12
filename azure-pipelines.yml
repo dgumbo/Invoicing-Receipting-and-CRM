@@ -7,9 +7,9 @@ trigger:
     - docs/*  # exclude the docs folder
 
 pool:
-  vmImage: 'ubuntu-16.04'
+  vmImage: 'ubuntu-latest'
   demands:
-  - npm
+  - npm 
 
 variables:
   buildConfiguration: 'Release'
@@ -56,9 +56,27 @@ steps:
   
 
 #### Run npm install So that Sonar Tests do not fail. 
-- script: 'npm install'
+# - script: 'npm install'
+#   displayName: 'Run npm install 2'
+#   workingDirectory: $(ngRootDir)
+#   condition: |
+#     and (
+#       succeeded(),
+#       or (
+#         and ( 
+#           eq(variables['Build.Reason'], 'PullRequest'),
+#           eq(variables['System.PullRequest.TargetBranch'], 'master')
+#         ),        
+#         eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+#         eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+#       )
+#     )
+
+- task: Npm@1
   displayName: 'Run npm install'
-  workingDirectory: $(ngRootDir)
+  inputs:
+    command: 'install'
+    workingDir: '$(ngRootDir)'
   condition: |
     and (
       succeeded(),
@@ -248,7 +266,7 @@ steps:
 - task: AzureWebApp@1
   displayName: 'Deploy App to Azure Website'
   inputs:
-    azureSubscription: 'Visual Studio Enterprise Subscription – MPN(6cc72829-3201-4e65-944f-2d9bbe848ab3)'
+    azureSubscription: '$(AzureSubscription)'
     appType: 'webAppLinux'
     appName: 'invoice-app-prod'
     package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
