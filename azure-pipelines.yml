@@ -9,8 +9,7 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
   demands:
-  - npm
-  - ng
+  - npm 
 
 variables:
   buildConfiguration: 'Release'
