@@ -47,12 +47,14 @@ steps:
   inputs:
     version: '2.1.505'
   condition: |
-    or
+    and
     (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master'),        
-      eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      or(
+        eq(variables['Build.Reason'], 'PullRequest'),
+        eq(variables['System.PullRequest.TargetBranch'], 'master'),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
     )
 
 
