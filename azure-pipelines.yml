@@ -23,17 +23,22 @@ steps:
   inputs:
     packageType: sdk
     version: $(dotNetSdkVersion) 
+
     
 - task: UseDotNet@2
   displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
   inputs:
     version: '2.1.505'
   condition: |
-    and
-    (
+    and (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
     )
 
 
@@ -54,11 +59,15 @@ steps:
   displayName: 'Run npm install'
   workingDirectory: $(ngRootDir)
   condition: |
-    and
-    (
+    and (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
     )
 
 
@@ -84,11 +93,15 @@ steps:
      sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml
      sonar.exclusions=**/wwwroot/lib/**/*
   condition: |
-    and
-    (
+    and (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
     )
 
 
@@ -130,22 +143,30 @@ steps:
 - task: SonarCloudAnalyze@1
   displayName: 'Run SonarCloud code analysis'
   condition: |
-    and
-    (
+    and (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
     )
 
 
 - task: SonarCloudPublish@1
   displayName: 'Publish SonarCloud quality gate results'
   condition: |
-    and
-    (
+    and (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
     )
 
 
@@ -195,6 +216,17 @@ steps:
 
 - task: WhiteSource Bolt@20
   displayName: 'Run WhiteSource Bolt'
+  condition: |
+    and (
+      succeeded(),
+      or (
+        and ( 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      )
+    )
 
 
 - task: PublishBuildArtifacts@1
