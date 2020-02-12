@@ -32,8 +32,14 @@ steps:
     and
     (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or 
+      (
+        and 
+        (
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
 
 
@@ -57,8 +63,14 @@ steps:
     and
     (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or 
+      (
+        and 
+        (
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
 
 
@@ -87,8 +99,14 @@ steps:
     and
     (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or 
+      (
+        and 
+        (
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
 
 
@@ -133,8 +151,14 @@ steps:
     and
     (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or 
+      (
+        and 
+        (
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
 
 
@@ -144,8 +168,14 @@ steps:
     and
     (
       succeeded(),
-      eq(variables['Build.Reason'], 'PullRequest'),
-      eq(variables['System.PullRequest.TargetBranch'], 'master')
+      or 
+      (
+        and 
+        (
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['System.PullRequest.TargetBranch'], 'master')
+        ),        
+        eq(variables['Build.SourceBranch'], 'refs/heads/master')
     )
 
 
