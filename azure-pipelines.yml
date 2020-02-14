@@ -23,288 +23,288 @@ stages:
       demands:
       - npm 
 
-  steps:
+    steps:
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
-    inputs:
-      packageType: sdk
-      version: $(dotNetSdkVersion) 
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
+      inputs:
+        packageType: sdk
+        version: $(dotNetSdkVersion) 
 
-      
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
-    inputs:
-      version: '2.1.505'
-    condition: |
-      and (
-        succeeded(),
-        or (
-          and ( 
-            eq(variables['Build.Reason'], 'PullRequest'),
-            eq(variables['System.PullRequest.TargetBranch'], 'master')
-          ),        
-          eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-          eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+        
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
+      inputs:
+        version: '2.1.505'
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
         )
-      )
 
 
-  - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
-    displayName: 'Write build info'
-    workingDirectory: ./invoice-app
+    - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
+      displayName: 'Write build info'
+      workingDirectory: ./invoice-app
 
 
-  - task: DotNetCoreCLI@2
-    displayName: 'Restore project dependencies'
-    inputs:
-      command: 'restore'
-      projects: '**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore project dependencies'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+      
+
+    #### Run npm install So that Sonar Tests do not fail. 
+    - task: Npm@1
+      displayName: 'Run npm install'
+      inputs:
+        command: 'install'
+        workingDir: '$(ngRootDir)'
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
+    #### End Run npm install So that Sonar Tests do not fail. 
+
+
+    - task: SonarCloudPrepare@1
+      displayName: 'Prepare SonarCloud analysis'
+      inputs:
+        SonarCloud: '$(SonarCloundConnection)'
+        organization: '$(SonarOrganization)'
+        scannerMode: 'MSBuild'
+        projectKey: '$(SonarProjectKey)'
+        projectName: '$(SonarProjectName)'
+        projectVersion: '$(Build.BuildNumber)'
+        extraProperties: |
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml
+        sonar.exclusions=**/wwwroot/lib/**/*
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
+
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build the project - $(buildConfiguration)'
+      inputs:
+        command: 'build'
+        arguments: '--no-restore --configuration $(buildConfiguration)'
+        projects: '**/*.csproj'
+
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests - $(buildConfiguration)'
+      inputs:
+        command: 'test'
+        arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+        publishTestResults: true
+        projects: '**/*.*Tests.csproj' 
+
+
+    # - script: 'sudo apt-get install tree && tree -L 2'
+    #   displayName: 'Print Directory Tree For Test Results' 
+    #   workingDirectory: $(Build.SourcesDirectory)/
+
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Install ReportGenerator'
+      inputs:
+        command: custom
+        custom: tool
+        arguments: 'install --global dotnet-reportgenerator-globaltool' 
+
+
+    - script: |
+        reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
+      displayName: 'Create code coverage report'  
+
+
+    - task: SonarCloudAnalyze@1
+      displayName: 'Run SonarCloud code analysis'
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
+
+
+    - task: SonarCloudPublish@1
+      displayName: 'Publish SonarCloud quality gate results'
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
+
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml' 
+        
+
+    #### Install Angular just before publishing code.    
+    - script: 'sudo npm install -g @angular/cli'
+      displayName: 'Install @Angular/Cli Global'  
+      condition: |
+        and
+        (
+          succeeded(), 
+          or (
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
+        
+    - script: 'ng --version'
+      displayName: 'Display @Angular/Cli Version Installed'
+      condition: |
+        and
+        (
+          succeeded(), 
+          or (
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
+    #### End Install Angular just before publishing code.  
+
     
+    ##### CustomCommand: run-script build-prod
+    # - task: Npm@1
+    #   displayName: 'Build Frontend for Production'
+    #   inputs: 
+    #     verbose: false
+    #     command: custom
+    #     workingDir: '$(ngRootDir)'
+    #     customCommand: run-script build-prod
+    ##### End CustomCommand: run-script build-prod
 
-  #### Run npm install So that Sonar Tests do not fail. 
-  - task: Npm@1
-    displayName: 'Run npm install'
-    inputs:
-      command: 'install'
-      workingDir: '$(ngRootDir)'
-    condition: |
-      and (
-        succeeded(),
-        or (
-          and ( 
-            eq(variables['Build.Reason'], 'PullRequest'),
-            eq(variables['System.PullRequest.TargetBranch'], 'master')
-          ),        
-          eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-          eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish the project - $(buildConfiguration)'
+      inputs:
+        command: 'publish'
+        projects: '**/invoice-app.csproj'
+        publishWebProjects: false
+        arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+        zipAfterPublish: true
+      condition: |
+        and
+        (
+          succeeded(), 
+          or (
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
         )
-      )
-  #### End Run npm install So that Sonar Tests do not fail. 
+        
+
+    - task: WhiteSource Bolt@20
+      displayName: 'Run WhiteSource Bolt'
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
 
 
-#   - task: SonarCloudPrepare@1
-#     displayName: 'Prepare SonarCloud analysis'
-#     inputs:
-#       SonarCloud: '$(SonarCloundConnection)'
-#       organization: '$(SonarOrganization)'
-#       scannerMode: 'MSBuild'
-#       projectKey: '$(SonarProjectKey)'
-#       projectName: '$(SonarProjectName)'
-#       projectVersion: '$(Build.BuildNumber)'
-#       extraProperties: |
-#       sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml
-#       sonar.exclusions=**/wwwroot/lib/**/*
-#     condition: |
-#       and (
-#         succeeded(),
-#         or (
-#           and ( 
-#             eq(variables['Build.Reason'], 'PullRequest'),
-#             eq(variables['System.PullRequest.TargetBranch'], 'master')
-#           ),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
+  - stage: Deploy
+    displayName: 'Deploy Web App'
+    dependsOn: Build
+    condition: succeeded()            
+    # condition: |
+    #   and
+    #   (
+    #     succeeded(), 
+    #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+    #   )
+    jobs:
+    - deployment: DeploymentJob
+      pool:
+        vmImage: $(vmImageName)
+      environment: $(environmentName)
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            
+            - task: UseDotNet@2
+              displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
+              inputs:
+                packageType: sdk
+                version: $(dotNetSdkVersion) 
 
 
-#   - task: DotNetCoreCLI@2
-#     displayName: 'Build the project - $(buildConfiguration)'
-#     inputs:
-#       command: 'build'
-#       arguments: '--no-restore --configuration $(buildConfiguration)'
-#       projects: '**/*.csproj'
+            - task: AzureWebApp@1
+              displayName: 'Deploy Azure Web App : dgumbo-python-flask'
+              inputs:
+                azureSubscription: $(azureServiceConnectionId)
+                appName: $(webAppName)
+                package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
-
-#   - task: DotNetCoreCLI@2
-#     displayName: 'Run unit tests - $(buildConfiguration)'
-#     inputs:
-#       command: 'test'
-#       arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
-#       publishTestResults: true
-#       projects: '**/*.*Tests.csproj' 
-
-
-#   # - script: 'sudo apt-get install tree && tree -L 2'
-#   #   displayName: 'Print Directory Tree For Test Results' 
-#   #   workingDirectory: $(Build.SourcesDirectory)/
-
-
-#   - task: DotNetCoreCLI@2
-#     displayName: 'Install ReportGenerator'
-#     inputs:
-#       command: custom
-#       custom: tool
-#       arguments: 'install --global dotnet-reportgenerator-globaltool' 
-
-
-#   - script: |
-#       reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
-#     displayName: 'Create code coverage report'  
-
-
-#   - task: SonarCloudAnalyze@1
-#     displayName: 'Run SonarCloud code analysis'
-#     condition: |
-#       and (
-#         succeeded(),
-#         or (
-#           and ( 
-#             eq(variables['Build.Reason'], 'PullRequest'),
-#             eq(variables['System.PullRequest.TargetBranch'], 'master')
-#           ),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
-
-
-#   - task: SonarCloudPublish@1
-#     displayName: 'Publish SonarCloud quality gate results'
-#     condition: |
-#       and (
-#         succeeded(),
-#         or (
-#           and ( 
-#             eq(variables['Build.Reason'], 'PullRequest'),
-#             eq(variables['System.PullRequest.TargetBranch'], 'master')
-#           ),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
-
-
-#   - task: PublishCodeCoverageResults@1
-#     displayName: 'Publish code coverage report'
-#     inputs:
-#       codeCoverageTool: 'cobertura'
-#       summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml' 
-      
-
-#   #### Install Angular just before publishing code.    
-#   - script: 'sudo npm install -g @angular/cli'
-#     displayName: 'Install @Angular/Cli Global'  
-#     condition: |
-#       and
-#       (
-#         succeeded(), 
-#         or (
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
-      
-#   - script: 'ng --version'
-#     displayName: 'Display @Angular/Cli Version Installed'
-#     condition: |
-#       and
-#       (
-#         succeeded(), 
-#         or (
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
-#   #### End Install Angular just before publishing code.  
-
-  
-#   ##### CustomCommand: run-script build-prod
-#   # - task: Npm@1
-#   #   displayName: 'Build Frontend for Production'
-#   #   inputs: 
-#   #     verbose: false
-#   #     command: custom
-#   #     workingDir: '$(ngRootDir)'
-#   #     customCommand: run-script build-prod
-#   ##### End CustomCommand: run-script build-prod
-
-#   - task: DotNetCoreCLI@2
-#     displayName: 'Publish the project - $(buildConfiguration)'
-#     inputs:
-#       command: 'publish'
-#       projects: '**/invoice-app.csproj'
-#       publishWebProjects: false
-#       arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
-#       zipAfterPublish: true
-#     condition: |
-#       and
-#       (
-#         succeeded(), 
-#         or (
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
-      
-
-#   - task: WhiteSource Bolt@20
-#     displayName: 'Run WhiteSource Bolt'
-#     condition: |
-#       and (
-#         succeeded(),
-#         or (
-#           and ( 
-#             eq(variables['Build.Reason'], 'PullRequest'),
-#             eq(variables['System.PullRequest.TargetBranch'], 'master')
-#           ),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-#           eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#         )
-#       )
-
-
-# - stage: Deploy
-#   displayName: 'Deploy Web App'
-#   dependsOn: Build
-#   condition: succeeded()            
-#   # condition: |
-#   #   and
-#   #   (
-#   #     succeeded(), 
-#   #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#   #   )
-#   jobs:
-#   - deployment: DeploymentJob
-#     pool:
-#       vmImage: $(vmImageName)
-#     environment: $(environmentName)
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-          
-#           - task: UseDotNet@2
-#             displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
-#             inputs:
-#               packageType: sdk
-#               version: $(dotNetSdkVersion) 
-
-
-#           - task: AzureWebApp@1
-#             displayName: 'Deploy Azure Web App : dgumbo-python-flask'
-#             inputs:
-#               azureSubscription: $(azureServiceConnectionId)
-#               appName: $(webAppName)
-#               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-
-              
-#           ### Deploy to Azure Task  ###
-#           - task: AzureWebApp@1
-#             displayName: 'Deploy App to Azure Website'
-#             inputs:
-#               azureSubscription: '$(AzureSubscription)'
-#               appType: 'webAppLinux'
-#               appName: 'invoice-app-dev'
-#               package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
-#             # condition: |
-#             #   and
-#             #   (
-#             #     succeeded(), 
-#             #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-#             #   )
-#           ### End Deploy to Azure Task  ###
+                
+            ### Deploy to Azure Task  ###
+            - task: AzureWebApp@1
+              displayName: 'Deploy App to Azure Website'
+              inputs:
+                azureSubscription: '$(AzureSubscription)'
+                appType: 'webAppLinux'
+                appName: 'invoice-app-dev'
+                package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
+              # condition: |
+              #   and
+              #   (
+              #     succeeded(), 
+              #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+              #   )
+            ### End Deploy to Azure Task  ###
 
  
 
