@@ -83,6 +83,7 @@ stages:
     #### End Run npm install So that Sonar Tests do not fail. 
 
 
+
 #     - task: SonarCloudPrepare@1
 #       displayName: 'Prepare SonarCloud analysis'
 #       inputs:
