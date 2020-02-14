@@ -17,18 +17,17 @@ using invoice_app.FontAwesome;
 * @author dgumbo
 */
 namespace invoice_demo_app.invoice.service.impl
-{
-    // Microsoft.AspNetCore.Mvc.api 
+{ 
     public class InvoiceServiceImpl : InvoiceService
     {
         private readonly AppDbContext appDbContext;
 
-        private int maxRowSize = 23;
-        private int maxPageWithSummation = 16;
-        private int breakPoint = 12;
+        //private int MAX_ROW_SIZE { get; set; } // = 23;
+        //private int MAX_PAGE_WITH_SUMMATION { get; set; } // = 16;
+        //private int BREAK_POINT { get; set; } // = 12;
 
-        private readonly float POINTS_PER_INCH = 72;
-        private float MM_PER_INCH { get { return 1 / (10 * 2.54f) * POINTS_PER_INCH; } }
+        //private readonly float POINTS_PER_INCH = 72;
+        //private float MM_PER_INCH { get { return 1 / (10 * 2.54f) * POINTS_PER_INCH; } }
 
         private double DOCUMENT_WIDTH;
         private double DOCUMENT_HEIGHT;
@@ -40,21 +39,21 @@ namespace invoice_demo_app.invoice.service.impl
         private double DOCUMENT_PRINTABLE_WIDTH { get { return DOCUMENT_WIDTH - DOCUMENT_RIGHT_MARGIN - DOCUMENT_LEFT_MARGIN; } }
         private double DOCUMENT_PRINTABLE_HEIGHT { get { return DOCUMENT_HEIGHT - DOCUMENT_TOP_MARGIN - DOCUMENT_BOTTOM_MARGIN; } }
 
-        private double COL1_START_X { get { return DOCUMENT_LEFT_MARGIN; } }
+
         private double COL1_WIDTH { get { return (DOCUMENT_WIDTH - DOCUMENT_LEFT_MARGIN - DOCUMENT_RIGHT_MARGIN) * 7 / 10; } }
-        private double COL2_START_X { get { return COL1_START_X + COL1_WIDTH; } }
+        private double COL2_START_X { get { return DOCUMENT_LEFT_MARGIN + COL1_WIDTH; } }
         private double COL2_WIDTH { get { return (DOCUMENT_WIDTH - DOCUMENT_LEFT_MARGIN - DOCUMENT_RIGHT_MARGIN) * 3 / 10; } }
 
         private readonly XBrush brush = XBrushes.Black;
 
         public InvoiceServiceImpl(AppDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
             appDbContext.Invoice
                 .Include(i => i.InvoiceLines)
                 .Include(i => i.ShipTo)
                 .Include(i => i.BillTo)
                 .Include("InvoiceLines.Product").ToList();
+            this.appDbContext = appDbContext;
         }
 
         public DbSet<Invoice> GetDbSet()
@@ -90,7 +89,7 @@ namespace invoice_demo_app.invoice.service.impl
             PrintInvoiceCaption(gfx, nextStartY);
 
             bool hasLogo = true;
-            nextStartY = PrintLetterHead(pdfDocument, gfx, nextStartY, hasLogo);
+            nextStartY = PrintLetterHead( gfx, nextStartY, hasLogo);
 
             Address billingAddress = invoice.BillTo;
             nextStartY = PrintBillingData(gfx, nextStartY, billingAddress);
@@ -111,23 +110,24 @@ namespace invoice_demo_app.invoice.service.impl
 
                 nextStartY = PrintInvoiceRow(gfx, nextStartY, invoiceRow, odd);
                 totalCost = invoiceRow.addTotal(totalCost);
-                if (NewPageRequired(numPrintedRows, rowsLeft))
+
+                if (nextStartY >= DOCUMENT_PRINTABLE_HEIGHT)
                 {
                     rowsLeft += numPrintedRows;
                     numPrintedRows = 0;
-                    maxRowSize = 30;
-                    maxPageWithSummation = 23;
-                    breakPoint = 18;
+                    //MAX_ROW_SIZE = 30;
+                    //MAX_PAGE_WITH_SUMMATION = 23;
+                    //BREAK_POINT = 18;
                     nextStartY = 660;
-                    pdfPage = NewPage(pdfDocument, PageSize.A4, nextStartY, rowsLeft, invoice
-                    );
+                    pdfPage = NewPage(pdfDocument, PageSize.A4, nextStartY, invoice);
                 }
             }
 
             bool includeVat = false;
             nextStartY = PrintServicesListSummary(gfx, totalCost, nextStartY, includeVat);
-            nextStartY = PrintTermsAndConditions(gfx, nextStartY, invoice);
-            nextStartY = PrintPaymentDetails(gfx, nextStartY, invoice);
+            nextStartY = PrintTermsAndConditions(gfx, nextStartY);
+              PrintPaymentDetails(gfx, nextStartY, invoice);
+             
             PrintFooter(gfx);
 
             return pdfDocument;
@@ -151,7 +151,7 @@ namespace invoice_demo_app.invoice.service.impl
             printer.DrawString(sStr, invoiceCaptionFont, brush, new XPoint(DOCUMENT_WIDTH - size.Width - DOCUMENT_RIGHT_MARGIN, iStartY));
         }
 
-        private double PrintLetterHead(PdfDocument pdfDocument, XGraphics printer, double invoiceStartY, bool bHasLogo)
+        private double PrintLetterHead(  XGraphics printer, double invoiceStartY, bool bHasLogo)
         {
             double invoiceStartX = bHasLogo ? 165 : DOCUMENT_LEFT_MARGIN;
 
@@ -280,7 +280,7 @@ namespace invoice_demo_app.invoice.service.impl
                 }
             }
 
-            XRect r1 = new XRect(COL1_START_X, startY - 10, COL1_WIDTH, rowHeight * lines.Count + topMargin);
+            XRect r1 = new XRect(DOCUMENT_LEFT_MARGIN, startY - 10, COL1_WIDTH, rowHeight * lines.Count + topMargin);
             XRect r2 = new XRect(COL2_START_X, startY - 10, COL2_WIDTH, rowHeight * lines.Count + topMargin);
             if (odd)
                 printer.DrawRectangles(strokePen, new XSolidBrush(XColor.FromArgb(230, 230, 230)), new XRect[] { r1, r2 });
@@ -291,7 +291,7 @@ namespace invoice_demo_app.invoice.service.impl
             double yPos = startY; // + rowHeight - rowHeight * 2 / 5;
             foreach (string line in lines)
             {
-                printer.DrawString(line, font, brush, new XPoint(COL1_START_X + 10, yPos));
+                printer.DrawString(line, font, brush, new XPoint(DOCUMENT_LEFT_MARGIN + 10, yPos));
                 yPos += rowHeight;
             }
 
@@ -307,14 +307,14 @@ namespace invoice_demo_app.invoice.service.impl
         {
             double summaryRowHeight = 0;
             double subTotal = totalCost * 0.8f;
-            double vatValue = totalCost * 0.2f;
+            //double vatValue = totalCost * 0.2f;
 
             XPen strokePen = new XPen(XColor.FromArgb(100, 100, 100));
 
             XFont font = new XFont("Times", 12, XFontStyle.Bold);
             string sDecimalFormat = "###,###.00";
 
-            XSize size = XSize.Empty;
+            XSize size;//= XSize.Empty;
             if (includeVat)
             {
                 // /* Print Subtotal */ 
@@ -353,7 +353,7 @@ namespace invoice_demo_app.invoice.service.impl
             return summaryStartY;
         }
 
-        private PdfPage NewPage(PdfDocument pdfDocument, PageSize pageSize, double Y_Start, int numRows, Invoice invoice)
+        private PdfPage NewPage(PdfDocument pdfDocument, PageSize pageSize, double Y_Start,  Invoice invoice)
         {
             // One page in Portrait...
             PdfPage page = pdfDocument.AddPage();
@@ -362,14 +362,14 @@ namespace invoice_demo_app.invoice.service.impl
             XGraphics gfx = XGraphics.FromPdfPage(page);
 
             bool hasLogo = false;
-            PrintLetterHead(pdfDocument, gfx, DOCUMENT_TOP_MARGIN, hasLogo);
+            PrintLetterHead( gfx, DOCUMENT_TOP_MARGIN, hasLogo);
             PrintInvoiceMetadata(gfx, DOCUMENT_TOP_MARGIN, invoice);
-            double nextStartY = PrintServicesListHeaderRow(gfx, Y_Start);
+              PrintServicesListHeaderRow(gfx, Y_Start);
 
             return page;
         }
 
-        private double PrintTermsAndConditions(XGraphics printer, double startY, Invoice invoice)
+        private double PrintTermsAndConditions(XGraphics printer, double startY)
         {
             string termsAndConditions = "Quotation Valid for 21 Days. Quotation Valid for 21 Days. Quotation Valid for 21 Days. Quotation Valid for 21 Days. Quotation Valid for 21 Days. Quotation Valid for 21 Days. Quotation Valid for 21 Days. ";
 
@@ -499,34 +499,16 @@ namespace invoice_demo_app.invoice.service.impl
             XSolidBrush fillColor = new XSolidBrush(XColor.FromArgb(230, 230, 230));
 
             printer.DrawRectangles(strokePen, fillColor, new XRect[] {
-                new XRect(COL1_START_X, nextStartY, COL1_WIDTH, headerRowHeight),
+                new XRect(DOCUMENT_LEFT_MARGIN, nextStartY, COL1_WIDTH, headerRowHeight),
                 new XRect(COL2_START_X, nextStartY, COL2_WIDTH, headerRowHeight)
             });
 
             double textY = nextStartY + (headerRowHeight * 7 / 10); // + printer.MeasureString("Description", font).Height; 
 
-            printer.DrawString("Description", font, brush, new XPoint(COL1_START_X + 10, textY));
+            printer.DrawString("Description", font, brush, new XPoint(DOCUMENT_LEFT_MARGIN + 10, textY));
             printer.DrawString("Amount", font, brush, new XPoint(COL2_START_X + 10, textY));
 
             return nextStartY;
-        }
-
-        private bool NewPageRequired(int numPrintedRows, int rowsLeft)
-        {
-            if (numPrintedRows >= this.maxRowSize)
-            {
-                return true;
-            }
-            if (this.maxPageWithSummation < rowsLeft && rowsLeft < this.maxRowSize)
-            {
-                if (numPrintedRows >= this.breakPoint)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-         
-
+        }         
     }
 }

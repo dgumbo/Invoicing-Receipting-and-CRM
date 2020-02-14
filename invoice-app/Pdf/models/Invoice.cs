@@ -39,7 +39,7 @@ namespace invoice_demo_app.Pdf.models
         [Column("payment_details", TypeName = "nVarChar(Max)")]
         public string PaymentDetails { get; set; }
 
-        public override List<InvoiceLine> getListItems()
+        public override List<InvoiceLine> GetListItems()
         {
             return InvoiceLines;
         } 

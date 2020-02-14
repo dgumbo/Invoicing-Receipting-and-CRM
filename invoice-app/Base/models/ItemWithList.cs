@@ -6,11 +6,11 @@ namespace invoice_app.Basic.models
 {
     public abstract class ItemWithList<B> : BaseEntity where B : BaseEntity
     {
-        public abstract List<B> getListItems();
+        public abstract List<B> GetListItems();
 
         public override void ValidateBaseEntityProperties()
         {
-            getListItems().ForEach(item => item.ValidateBaseEntityProperties());
+            GetListItems().ForEach(item => item.ValidateBaseEntityProperties());
             base.ValidateBaseEntityProperties();
         }
     }

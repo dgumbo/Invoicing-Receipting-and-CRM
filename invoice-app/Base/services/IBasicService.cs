@@ -29,7 +29,7 @@ namespace invoice_demo_app.Basic.services
         public async ValueTask<T> FindAsync(int id)
         {
             return await GetDbSet().FindAsync(id); 
-        }
+        } 
 
         public T Find(int id)
         {
@@ -43,7 +43,7 @@ namespace invoice_demo_app.Basic.services
             GetDbContext().SaveChanges();
 
             return data;
-        }
+        } 
 
         public T Create(T data)
         {
