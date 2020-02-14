@@ -13,11 +13,11 @@ public class InitTestData
 {
 
     private readonly InvoiceService invoiceService;
-    private readonly ReceiptService receiptService;
-    private readonly ProductService productService;
-    private readonly AddressService addressService;
+    private readonly IReceiptService receiptService;
+    private readonly IProductService productService;
+    private readonly IAddressService addressService;
 
-    public InitTestData(ReceiptService receiptService, InvoiceService invoiceService, ProductService productService, AddressService addressService)
+    public InitTestData(IReceiptService receiptService, InvoiceService invoiceService, IProductService productService, IAddressService addressService)
     {
         this.invoiceService = invoiceService;
         this.productService = productService;

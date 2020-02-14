@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace invoice_app.Services.impl
 {
-    public class ReceiptServiceImpl : ReceiptService
+    public class ReceiptServiceImpl : IReceiptService
     {
         private readonly AppDbContext appDbContext;  
 

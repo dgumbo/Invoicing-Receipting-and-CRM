@@ -51,9 +51,9 @@ namespace invoice_app
 
             // Add application services.
             services.AddTransient<InvoiceService, InvoiceServiceImpl>()
-            .AddTransient<ProductService, ProductServiceImpl>()
-            .AddTransient<AddressService, AddressServiceImpl>()
-            .AddTransient<ReceiptService, ReceiptServiceImpl>()
+            .AddTransient<IProductService, ProductServiceImpl>()
+            .AddTransient<IAddressService, AddressServiceImpl>()
+            .AddTransient<IReceiptService, ReceiptServiceImpl>()
             //.AddTransient<InitTestData, InitTestData>()
             ;
 

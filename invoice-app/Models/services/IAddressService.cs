@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace invoice_app.Services
 {
-    public interface AddressService : IBasicService<Address>
+    public interface IAddressService : IBasicService<Address>
     {
     }
 }

@@ -3,18 +3,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace invoice_app.Services.impl
 {
-    public class ProductServiceImpl : ProductService
+    public class AddressServiceImpl : IAddressService
     {
         private readonly AppDbContext appDbContext; 
 
-        public ProductServiceImpl(AppDbContext appDbContext)
+        public AddressServiceImpl(AppDbContext appDbContext)
         {
             this.appDbContext = appDbContext;
         }
 
-        public DbSet<Product> GetDbSet()
+        public DbSet<Address> GetDbSet()
         {
-            return this.appDbContext.Product;
+            return this.appDbContext.Address;
         }
 
         public AppDbContext GetDbContext()

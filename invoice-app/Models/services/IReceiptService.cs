@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace invoice_app.Services
 {
-    public interface ReceiptService : IBasicService<Invoice>
+    public interface IReceiptService : IBasicService<Invoice>
     {
     }
 }
