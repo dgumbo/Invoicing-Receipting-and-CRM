@@ -1,10 +1,15 @@
+# Dotnet to Linux Web App on Azure
+# Build your Dotnet project and deploy it to Azure as a Linux Web App.
+# Change Dotnet version to one thats appropriate for your application.
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet
+
 trigger:
   branches:
     include:
     - '*'     # build all branches
-  paths:
-    exclude:
-    - docs/*  # exclude the docs folder
+  # paths:
+  #   exclude:
+  #   - docs/*  # exclude the docs folder
 
 variables:
   buildConfiguration: 'Release'
