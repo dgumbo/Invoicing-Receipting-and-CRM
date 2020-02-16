@@ -240,15 +240,15 @@ stages:
         publishWebProjects: false
         arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
         zipAfterPublish: true
-      condition: |
-        and
-        (
-          succeeded(), 
-          or (
-            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-          )
-        )
+      # condition: |
+      #   and
+      #   (
+      #     succeeded(), 
+      #     or (
+      #       eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+      #       eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+      #     )
+      #   )
         
 
     - task: WhiteSource Bolt@20
