@@ -18,15 +18,21 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 
+pool:
+  vmImage: $(vmImageName)
+  demands:
+  - npm 
+
 stages:
+
 - stage: Build
   displayName: Build Stage
   jobs:
   - job: Build
-    pool:
-      vmImage: $(vmImageName)
-      demands:
-      - npm 
+    # pool:
+    #   vmImage: $(vmImageName)
+    #   demands:
+    #   - npm 
 
     steps:
 
@@ -272,9 +278,9 @@ stages:
   #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
   #   )
   jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: $(vmImageName)
+  - deployment: Deploydot
+    # pool:
+    #   vmImage: $(vmImageName)
     environment: $(environmentName)
     strategy:
       runOnce:
