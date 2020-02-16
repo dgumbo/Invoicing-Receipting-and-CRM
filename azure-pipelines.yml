@@ -285,8 +285,6 @@ stages:
   #   )
   jobs:
   
-  - script: 'echo $(Build.ArtifactStagingDirectory)/$(buildConfiguration)' 
-  
   - deployment: Deploy
     # pool:
     #   vmImage: $(vmImageName)
@@ -295,6 +293,8 @@ stages:
       runOnce:
         deploy:
           steps:
+  
+          - script: 'echo $(Build.ArtifactStagingDirectory)/$(buildConfiguration)' 
           
           - task: UseDotNet@2
             displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
