@@ -198,28 +198,30 @@ stages:
     #### Install Angular just before publishing code.    
     - script: 'sudo npm install -g @angular/cli'
       displayName: 'Install @Angular/Cli Global'  
-      condition: |
-        and
-        (
-          succeeded(), 
-          or (
-            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-          )
-        )
+      # condition: |
+      #   and
+      #   (
+      #     succeeded(), 
+      #     or (
+      #       eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+      #       eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+      #     )
+      #   )
         
+    
+    ### Show/Test Angular installation/version before Building/Publishing the project/code   ###
     - script: 'ng --version'
-      displayName: 'Display @Angular/Cli Version Installed'
-      condition: |
-        and
-        (
-          succeeded(), 
-          or (
-            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-          )
-        )
-    #### End Install Angular just before publishing code.  
+      displayName: 'Display @Angular/Cli Version' 
+      # condition: |
+      #   and
+      #   (
+      #     succeeded(), 
+      #     or (
+      #       eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+      #       eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+      #     )
+      #   )
+    ### End show/test Angular installation/version before Building/Publishing the project/code   ### 
 
     
     ##### CustomCommand: run-script build-prod
@@ -232,12 +234,6 @@ stages:
     #     customCommand: run-script build-prod
     ##### End CustomCommand: run-script build-prod
 
-    
-    ### Show Angular version before Building/Publishing the project/code   ###
-    - script: 'ng --version'
-      displayName: 'Display @Angular/Cli Version'
-      # workingDirectory: ./invoice-app/ClientApp
-    ### End show Angular version before Building/Publishing the project/code   ###
 
     - task: DotNetCoreCLI@2
       displayName: 'Publish the project - $(buildConfiguration)'
