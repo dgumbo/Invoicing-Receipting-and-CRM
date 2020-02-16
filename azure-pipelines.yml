@@ -261,58 +261,58 @@ stages:
         )
 
 
-  - stage: Deploy
-    displayName: 'Deploy Web App'
-    dependsOn: Build
-    condition: succeeded()            
-    # condition: |
-    #   and
-    #   (
-    #     succeeded(), 
-    #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-    #   )
-    jobs:
-    - deployment: DeploymentJob
-      pool:
-        vmImage: $(vmImageName)
-      environment: $(environmentName)
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            
-            - task: UseDotNet@2
-              displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
-              inputs:
-                packageType: sdk
-                version: $(dotNetSdkVersion) 
+- stage: Deploy
+  displayName: 'Deploy Web App'
+  dependsOn: Build
+  condition: succeeded()            
+  # condition: |
+  #   and
+  #   (
+  #     succeeded(), 
+  #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+  #   )
+  jobs:
+  - deployment: DeploymentJob
+    pool:
+      vmImage: $(vmImageName)
+    environment: $(environmentName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
+            inputs:
+              packageType: sdk
+              version: $(dotNetSdkVersion) 
 
 
-            - task: AzureWebApp@1
-              displayName: 'Deploy Azure Web App : dgumbo-python-flask'
-              inputs:
-                azureSubscription: $(azureServiceConnectionId)
-                appName: $(webAppName)
-                package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App : dgumbo-python-flask'
+            inputs:
+              azureSubscription: $(azureServiceConnectionId)
+              appName: $(webAppName)
+              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
-                
-            ### Deploy to Azure Task  ###
-            - task: AzureWebApp@1
-              displayName: 'Deploy App to Azure Website'
-              inputs:
-                azureSubscription: '$(AzureSubscription)'
-                appType: 'webAppLinux'
-                appName: 'invoice-app-dev'
-                package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
-              # condition: |
-              #   and
-              #   (
-              #     succeeded(), 
-              #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-              #   )
-            ### End Deploy to Azure Task  ###
+              
+          ### Deploy to Azure Task  ###
+          - task: AzureWebApp@1
+            displayName: 'Deploy App to Azure Website'
+            inputs:
+              azureSubscription: '$(AzureSubscription)'
+              appType: 'webAppLinux'
+              appName: 'invoice-app-dev'
+              package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
+            # condition: |
+            #   and
+            #   (
+            #     succeeded(), 
+            #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+            #   )
+          ### End Deploy to Azure Task  ###
 
- 
+
 
 # stages:
 # - stage: CleanUp
