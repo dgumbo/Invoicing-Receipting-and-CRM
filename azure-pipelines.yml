@@ -37,22 +37,22 @@ stages:
         version: $(dotNetSdkVersion) 
 
         
-    # - task: UseDotNet@2
-    #   displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
-    #   inputs:
-    #     version: '2.1.505'
-    #   condition: |
-    #     and (
-    #       succeeded(),
-    #       or (
-    #         and ( 
-    #           eq(variables['Build.Reason'], 'PullRequest'),
-    #           eq(variables['System.PullRequest.TargetBranch'], 'master')
-    #         ),        
-    #         eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-    #         eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-    #       )
-    #     )
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
+      inputs:
+        version: '2.1.505'
+      condition: |
+        and (
+          succeeded(),
+          or (
+            and ( 
+              eq(variables['Build.Reason'], 'PullRequest'),
+              eq(variables['System.PullRequest.TargetBranch'], 'master')
+            ),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+          )
+        )
 
 
     # - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
