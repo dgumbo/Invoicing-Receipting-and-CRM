@@ -32,55 +32,55 @@ stages:
         version: $(dotNetSdkVersion) 
 
         
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
-      inputs:
-        version: '2.1.505'
-      condition: |
-        and (
-          succeeded(),
-          or (
-            and ( 
-              eq(variables['Build.Reason'], 'PullRequest'),
-              eq(variables['System.PullRequest.TargetBranch'], 'master')
-            ),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-          )
-        )
+    # - task: UseDotNet@2
+    #   displayName: 'Use .NET Core SDK 2.1.505 for SonarCloud'
+    #   inputs:
+    #     version: '2.1.505'
+    #   condition: |
+    #     and (
+    #       succeeded(),
+    #       or (
+    #         and ( 
+    #           eq(variables['Build.Reason'], 'PullRequest'),
+    #           eq(variables['System.PullRequest.TargetBranch'], 'master')
+    #         ),        
+    #         eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+    #         eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+    #       )
+    #     )
 
 
-    - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
-      displayName: 'Write build info'
-      workingDirectory: ./invoice-app
+    # - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
+    #   displayName: 'Write build info'
+    #   workingDirectory: ./invoice-app
 
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore project dependencies'
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
+    # - task: DotNetCoreCLI@2
+    #   displayName: 'Restore project dependencies'
+    #   inputs:
+    #     command: 'restore'
+    #     projects: '**/*.csproj'
       
 
-    #### Run npm install So that Sonar Tests do not fail. 
-    - task: Npm@1
-      displayName: 'Run npm install'
-      inputs:
-        command: 'install'
-        workingDir: '$(ngRootDir)'
-      condition: |
-        and (
-          succeeded(),
-          or (
-            and ( 
-              eq(variables['Build.Reason'], 'PullRequest'),
-              eq(variables['System.PullRequest.TargetBranch'], 'master')
-            ),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
-            eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
-          )
-        )
-    #### End Run npm install So that Sonar Tests do not fail. 
+    # #### Run npm install So that Sonar Tests do not fail. 
+    # - task: Npm@1
+    #   displayName: 'Run npm install'
+    #   inputs:
+    #     command: 'install'
+    #     workingDir: '$(ngRootDir)'
+    #   condition: |
+    #     and (
+    #       succeeded(),
+    #       or (
+    #         and ( 
+    #           eq(variables['Build.Reason'], 'PullRequest'),
+    #           eq(variables['System.PullRequest.TargetBranch'], 'master')
+    #         ),        
+    #         eq(variables['Build.SourceBranch'], 'refs/heads/master'),        
+    #         eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
+    #       )
+    #     )
+    # #### End Run npm install So that Sonar Tests do not fail. 
 
 
 

@@ -3,6 +3,7 @@
 
 # User Defined Ignore Files/Folders
 .vs/
+.vscode/
 .OldCode/
 .sonarqube/
 */TestResults/ 
