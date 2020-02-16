@@ -286,16 +286,8 @@ stages:
             inputs:
               packageType: sdk
               version: $(dotNetSdkVersion) 
-
-
-          - task: AzureWebApp@1
-            displayName: 'Deploy Azure Web App : dgumbo-python-flask'
-            inputs:
-              azureSubscription: $(azureServiceConnectionId)
-              appName: $(webAppName)
-              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-
-              
+   
+   
           ### Deploy to Azure Task  ###
           - task: AzureWebApp@1
             displayName: 'Deploy App to Azure Website'
