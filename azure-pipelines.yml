@@ -270,6 +270,8 @@ stages:
           )
         )
 
+    - script: 'echo $(Build.ArtifactStagingDirectory)/$(buildConfiguration)' 
+
 
 - stage: Deploy
   displayName: 'Deploy Web App'
@@ -282,6 +284,9 @@ stages:
   #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
   #   )
   jobs:
+  
+  - script: 'echo $(Build.ArtifactStagingDirectory)/$(buildConfiguration)' 
+  
   - deployment: Deploy
     # pool:
     #   vmImage: $(vmImageName)
