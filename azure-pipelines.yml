@@ -311,7 +311,7 @@ stages:
               appType: 'webAppLinux'
               appName: 'invoice-app-dev'
               # package: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/**/invoice-app.zip'
-              package: '$(Pipeline.Workspace)/drop/invoice-app.zip.
+              package: '$(Pipeline.Workspace)/drop/invoice-app.zip'
             # condition: |
             #   and
             #   (
