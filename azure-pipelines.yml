@@ -271,6 +271,7 @@ stages:
         )
 
     - script: 'echo $(Build.ArtifactStagingDirectory)/$(buildConfiguration)' 
+    - script: '$(Pipeline.Workspace)/drop/invoice-app.zip'
 
 
 - stage: Deploy
@@ -295,6 +296,7 @@ stages:
           steps:
   
           - script: 'echo $(Build.ArtifactStagingDirectory)/$(buildConfiguration)' 
+          - script: '$(Pipeline.Workspace)/drop/invoice-app.zip'
           
           - task: UseDotNet@2
             displayName: 'Use .NET Core SDK $(dotNetSdkVersion)'
