@@ -18,8 +18,7 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 
-pool:
-  name: myPrivatePool
+pool: 
   vmImage: $(vmImageName)
   demands:
   - npm 
@@ -30,8 +29,7 @@ stages:
   displayName: Build Stage
   jobs:
   - job: RestoreProjectDependencies
-    displayName: Restore Project Dependencies
-    pool: myPrivatePool
+    displayName: Restore Project Dependencies 
 
     steps:
 
@@ -71,12 +69,10 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
       
-  - job: BuildProject
-    displayName: Build Project
-    dependsOn: RestoreProjectDependencies
-    pool: myPrivatePool
-
-    steps:
+  # - job: BuildProject
+  #   displayName: Build Project
+  #   dependsOn: RestoreProjectDependencies 
+  #   steps:
 
     #### Run npm install So that Sonar Tests do not fail. 
     - task: Npm@1
