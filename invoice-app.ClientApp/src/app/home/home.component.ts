@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Globals } from '../Globals';
+import { Component } from '@angular/core'; 
+import { Globals } from '../globals';
 
 declare var $: any;
 

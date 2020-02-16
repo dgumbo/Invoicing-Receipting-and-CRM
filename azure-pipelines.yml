@@ -232,6 +232,13 @@ stages:
     #     customCommand: run-script build-prod
     ##### End CustomCommand: run-script build-prod
 
+    
+    ### Show Angular version before Building/Publishing the project/code   ###
+    - script: 'ng --version'
+      displayName: 'Display @Angular/Cli Version'
+      # workingDirectory: ./invoice-app/ClientApp
+    ### End show Angular version before Building/Publishing the project/code   ###
+
     - task: DotNetCoreCLI@2
       displayName: 'Publish the project - $(buildConfiguration)'
       inputs:
