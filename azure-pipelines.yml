@@ -28,11 +28,8 @@ stages:
 - stage: Build
   displayName: Build Stage
   jobs:
-  - job: Build
-    # pool:
-    #   vmImage: $(vmImageName)
-    #   demands:
-    #   - npm 
+  - job: RestoreProjectDependencies
+    displayName: Restore Project Dependencies
 
     steps:
 
@@ -72,6 +69,11 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
       
+  - job: BuildProject
+    displayName: Build Project
+    dependsOn: RestoreProjectDependencies
+
+    steps:
 
     #### Run npm install So that Sonar Tests do not fail. 
     - task: Npm@1
@@ -281,7 +283,7 @@ stages:
   #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
   #   )
   jobs:
-  - deployment: Deploydot
+  - deployment: Deploy
     # pool:
     #   vmImage: $(vmImageName)
     environment: $(environmentName)
