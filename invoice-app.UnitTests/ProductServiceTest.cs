@@ -43,7 +43,7 @@ namespace invoice_app.Tests
             var productService = mockProductService.Object;
             var product = productService.Create(new Product());
 
-            Assert.That(product , Is.Not.Null);
+            Assert.That(product , Is.Null);
 
             // Verify that the given method was indeed called with the expected value at most once
             // mock.Verify(library => library.Create(product), Times.AtMostOnce());

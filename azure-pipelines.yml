@@ -272,7 +272,7 @@ stages:
   #     eq(variables['Build.SourceBranch'], 'refs/heads/deploy')
   #   )
   jobs:
-  - deployment: DeploymentJob
+  - deployment: Deploy
     pool:
       vmImage: $(vmImageName)
     environment: $(environmentName)
@@ -287,7 +287,7 @@ stages:
               packageType: sdk
               version: $(dotNetSdkVersion) 
    
-   
+
           ### Deploy to Azure Task  ###
           - task: AzureWebApp@1
             displayName: 'Deploy App to Azure Website'
